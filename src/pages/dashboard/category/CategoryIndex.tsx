@@ -6,6 +6,10 @@ interface CategoryType {
   name: string;
 }
 
+// API URL
+const API_URL =
+  import.meta.env.VITE_API_URL;
+
 // COMPONENT
 export default function CategoryIndex() {
 
@@ -30,7 +34,7 @@ export default function CategoryIndex() {
     try {
 
       const response = await fetch(
-        "/api/categories"
+        `${API_URL}/categories`
       );
 
       const data = await response.json();
@@ -73,8 +77,8 @@ export default function CategoryIndex() {
     try {
 
       const url = editId
-        ? `/api/categories/${editId}`
-        : `/api/categories`;
+        ? `${API_URL}/categories/${editId}`
+        : `${API_URL}/categories`;
 
       const method =
         editId ? "PUT" : "POST";
@@ -144,7 +148,7 @@ export default function CategoryIndex() {
     try {
 
       await fetch(
-        `/api/categories/${id}`,
+        `${API_URL}/categories/${id}`,
         {
           method: "DELETE",
         }

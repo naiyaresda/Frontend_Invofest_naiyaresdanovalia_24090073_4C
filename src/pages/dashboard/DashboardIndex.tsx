@@ -16,6 +16,10 @@ interface PembicaraType {
   name: string;
 }
 
+// API URL
+const API_URL =
+  import.meta.env.VITE_API_URL;
+
 export default function DashboardIndex() {
 
   // STATE
@@ -35,7 +39,7 @@ export default function DashboardIndex() {
 
       // EVENT
       const eventResponse = await fetch(
-        "/api/events"
+        `${API_URL}/events`
       );
 
       const eventData =
@@ -45,7 +49,9 @@ export default function DashboardIndex() {
 
       // CATEGORY
       const categoryResponse =
-        await fetch("/api/categories");
+        await fetch(
+          `${API_URL}/categories`
+        );
 
       const categoryData =
         await categoryResponse.json();
@@ -54,7 +60,9 @@ export default function DashboardIndex() {
 
       // PEMBICARA
       const speakerResponse =
-        await fetch("/api/pembicara");
+        await fetch(
+          `${API_URL}/pembicara`
+        );
 
       const speakerData =
         await speakerResponse.json();
@@ -67,7 +75,7 @@ export default function DashboardIndex() {
     }
   };
 
-  // LOAD DATA REALTIME
+  // LOAD DATA
   useEffect(() => {
 
     const loadDashboard = async () => {
@@ -76,18 +84,7 @@ export default function DashboardIndex() {
 
     };
 
-    // LOAD PERTAMA
     loadDashboard();
-
-    // AUTO REFRESH
-    const interval = setInterval(() => {
-
-      loadDashboard();
-
-    }, 2000);
-
-    // CLEANUP
-    return () => clearInterval(interval);
 
   }, []);
 

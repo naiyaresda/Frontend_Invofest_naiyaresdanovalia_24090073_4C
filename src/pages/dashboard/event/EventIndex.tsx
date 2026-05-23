@@ -28,6 +28,10 @@ interface PembicaraType {
   name: string;
 }
 
+// API URL
+const API_URL =
+  import.meta.env.VITE_API_URL;
+
 export default function EventIndex() {
 
   // DATA
@@ -57,7 +61,9 @@ export default function EventIndex() {
 
     try {
 
-      const res = await fetch("/api/events");
+      const res = await fetch(
+        `${API_URL}/events`
+      );
 
       const data = await res.json();
 
@@ -74,7 +80,9 @@ export default function EventIndex() {
 
     try {
 
-      const res = await fetch("/api/categories");
+      const res = await fetch(
+        `${API_URL}/categories`
+      );
 
       const data = await res.json();
 
@@ -91,7 +99,9 @@ export default function EventIndex() {
 
     try {
 
-      const res = await fetch("/api/pembicara");
+      const res = await fetch(
+        `${API_URL}/pembicara`
+      );
 
       const data = await res.json();
 
@@ -106,11 +116,17 @@ export default function EventIndex() {
   // LOAD DATA
   useEffect(() => {
 
-    fetchEvents();
+    const loadData = async () => {
 
-    fetchCategories();
+      await fetchEvents();
 
-    fetchPembicaras();
+      await fetchCategories();
+
+      await fetchPembicaras();
+
+    };
+
+    loadData();
 
   }, []);
 
@@ -134,7 +150,7 @@ export default function EventIndex() {
     try {
 
       const response = await fetch(
-        "/api/events",
+        `${API_URL}/events`,
         {
           method: "POST",
 
@@ -189,7 +205,7 @@ export default function EventIndex() {
     try {
 
       await fetch(
-        `/api/events/${id}`,
+        `${API_URL}/events/${id}`,
         {
           method: "DELETE",
         }

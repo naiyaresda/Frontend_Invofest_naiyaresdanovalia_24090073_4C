@@ -7,6 +7,10 @@ interface PembicaraType {
   image: string;
 }
 
+// API URL
+const API_URL =
+  import.meta.env.VITE_API_URL;
+
 export default function PembicaraIndex() {
 
   const [pembicara, setPembicara] =
@@ -31,7 +35,7 @@ export default function PembicaraIndex() {
     try {
 
       const res = await fetch(
-        "/api/pembicara"
+        `${API_URL}/pembicara`
       );
 
       const data = await res.json();
@@ -47,7 +51,13 @@ export default function PembicaraIndex() {
   // LOAD DATA
   useEffect(() => {
 
-    fetchPembicara();
+    const loadData = async () => {
+
+      await fetchPembicara();
+
+    };
+
+    loadData();
 
   }, []);
 
@@ -66,8 +76,8 @@ export default function PembicaraIndex() {
     }
 
     const url = editId
-      ? `/api/pembicara/${editId}`
-      : `/api/pembicara`;
+      ? `${API_URL}/pembicara/${editId}`
+      : `${API_URL}/pembicara`;
 
     const method =
       editId ? "PUT" : "POST";
@@ -147,7 +157,7 @@ export default function PembicaraIndex() {
     try {
 
       await fetch(
-        `/api/pembicara/${id}`,
+        `${API_URL}/pembicara/${id}`,
         {
           method: "DELETE",
         }
