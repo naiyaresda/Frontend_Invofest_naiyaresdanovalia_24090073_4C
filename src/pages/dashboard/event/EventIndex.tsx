@@ -48,6 +48,14 @@ export default function EventIndex() {
   const [showModal, setShowModal] =
     useState(false);
 
+  // DETAIL
+  const [selectedEvent, setSelectedEvent] =
+    useState<EventType | null>(null);
+
+  // EDIT
+  const [editId, setEditId] =
+    useState<number | null>(null);
+
   // FORM
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -130,7 +138,7 @@ export default function EventIndex() {
 
   }, []);
 
-  // CREATE EVENT
+  // CREATE & UPDATE EVENT
   const handleSubmit = async () => {
 
     if (
@@ -149,10 +157,17 @@ export default function EventIndex() {
 
     try {
 
+      const url = editId
+        ? `${API_URL}/events/${editId}`
+        : `${API_URL}/events`;
+
+      const method =
+        editId ? "PUT" : "POST";
+
       const response = await fetch(
-        `${API_URL}/events`,
+        url,
         {
-          method: "POST",
+          method,
 
           headers: {
             "Content-Type": "application/json",
@@ -182,6 +197,7 @@ export default function EventIndex() {
       setDateEvent("");
       setCategoryId("");
       setPembicaraId("");
+      setEditId(null);
 
       await fetchEvents();
 
@@ -189,6 +205,42 @@ export default function EventIndex() {
 
       console.log(err);
     }
+  };
+
+  // DETAIL EVENT
+  const handleDetail = (
+    event: EventType
+  ) => {
+
+    setSelectedEvent(event);
+  };
+
+  // EDIT EVENT
+  const handleEdit = (
+    event: EventType
+  ) => {
+
+    setEditId(event.id);
+
+    setTitle(event.name);
+
+    setDesc(event.description);
+
+    setLocation(event.location);
+
+    setDateEvent(
+      event.dateEvent.split("T")[0]
+    );
+
+    setCategoryId(
+      String(event.category?.id || "")
+    );
+
+    setPembicaraId(
+      String(event.pembicara?.id || "")
+    );
+
+    setShowModal(true);
   };
 
   // DELETE EVENT
@@ -240,7 +292,19 @@ export default function EventIndex() {
       <div className="flex justify-end mb-4">
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+
+            setShowModal(true);
+
+            setEditId(null);
+
+            setTitle("");
+            setDesc("");
+            setLocation("");
+            setDateEvent("");
+            setCategoryId("");
+            setPembicaraId("");
+          }}
           className="bg-red-800 text-white px-4 py-2 rounded-lg"
         >
           + Tambah Event
@@ -284,14 +348,27 @@ export default function EventIndex() {
 
             <div className="flex gap-2 mt-4">
 
-              <button className="bg-blue-500 text-white px-3 py-1 rounded">
+              {/* DETAIL */}
+              <button
+                onClick={() =>
+                  handleDetail(event)
+                }
+                className="bg-blue-500 text-white px-3 py-1 rounded"
+              >
                 Detail
               </button>
 
-              <button className="bg-yellow-500 text-white px-3 py-1 rounded">
+              {/* EDIT */}
+              <button
+                onClick={() =>
+                  handleEdit(event)
+                }
+                className="bg-yellow-500 text-white px-3 py-1 rounded"
+              >
                 Edit
               </button>
 
+              {/* DELETE */}
               <button
                 onClick={() =>
                   handleDelete(event.id)
@@ -308,15 +385,19 @@ export default function EventIndex() {
 
       </div>
 
-      {/* MODAL CREATE */}
+      {/* MODAL CREATE & EDIT */}
       {showModal && (
 
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
           <div className="bg-white p-5 rounded w-[400px] space-y-3">
 
             <h2 className="text-xl font-bold">
-              Tambah Event
+
+              {editId
+                ? "Edit Event"
+                : "Tambah Event"}
+
             </h2>
 
             <input
@@ -422,7 +503,74 @@ export default function EventIndex() {
                 onClick={handleSubmit}
                 className="bg-red-800 text-white px-3 py-1 rounded"
               >
-                Save
+
+                {editId
+                  ? "Update"
+                  : "Save"}
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* MODAL DETAIL */}
+      {selectedEvent && (
+
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+          <div className="bg-white p-6 rounded-xl w-[400px]">
+
+            <h2 className="text-2xl font-bold text-red-900 mb-4">
+              Detail Event
+            </h2>
+
+            <div className="space-y-2">
+
+              <p>
+                <strong>Nama:</strong>{" "}
+                {selectedEvent.name}
+              </p>
+
+              <p>
+                <strong>Deskripsi:</strong>{" "}
+                {selectedEvent.description}
+              </p>
+
+              <p>
+                <strong>Lokasi:</strong>{" "}
+                {selectedEvent.location}
+              </p>
+
+              <p>
+                <strong>Tanggal:</strong>{" "}
+                {selectedEvent.dateEvent}
+              </p>
+
+              <p>
+                <strong>Category:</strong>{" "}
+                {selectedEvent.category?.name}
+              </p>
+
+              <p>
+                <strong>Pembicara:</strong>{" "}
+                {selectedEvent.pembicara?.name}
+              </p>
+
+            </div>
+
+            <div className="flex justify-end mt-5">
+
+              <button
+                onClick={() =>
+                  setSelectedEvent(null)
+                }
+                className="bg-red-900 text-white px-4 py-2 rounded"
+              >
+                Tutup
               </button>
 
             </div>
